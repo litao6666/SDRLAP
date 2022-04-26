@@ -1,0 +1,51 @@
+usertype String;
+const FLIP:Function;
+const XOR:Function;
+const PUF:Function;
+const ROT:Function;
+const PRNG:Function;
+macro K1=PRNG(Seed1);
+macro K2=PRNG(Seed2);
+macro M1=XOR(ROT(FLIP(K2,K1),K1),Ri);
+macro M2=FLIP(ROT(Ri1,K1),K2);
+macro Ri1=PUF(Ri);
+macro Ri2=PUF(Ri1);
+macro M3=XOR(ROT(FLIP(K1,K2),K2),Ri2);
+macro M4=FLIP(ROT(Ri2,K2),K1);
+protocol my-protocol(S,T){
+	role S{
+		secret PUF:Function;
+		secret Ri,Ri1;
+		secret Seed1,Seed2;
+		fresh K1,K2;
+		send_1(S,T,M1,M2);
+		recv_2(T,S,M3,M4);
+		claim(S,Secret,Ri);
+		claim(S,Secret,Ri1);
+		claim(S,Secret,Seed1);
+		claim(S,Secret,Seed2);
+		claim(S,Secret,K1);
+		claim(S,Secret,K2);
+		claim(S,Alive);
+		claim(S,Weakagree);
+		claim(S,Nisynch);
+		claim(S,Niagree);
+	}
+	role T{
+		secret PUF:Function;
+		secret Ri,Ri1;
+		secret Seed1,Seed2;
+		fresh K1,K2;
+		recv_1(S,T,M1,M2);
+		send_2(T,S,M3,M4);
+		claim(T,Secret,Ri2);
+		claim(T,Secret,Seed1);
+		claim(T,Secret,Seed2);
+		claim(T,Secret,K1);
+		claim(T,Secret,K2);
+		claim(T,Alive);
+		claim(T,Weakagree);
+		claim(T,Nisynch);
+		claim(T,Niagree);
+	}
+}
