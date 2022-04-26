@@ -1,2 +1,2 @@
 # SDRLAP
-SDRLAP protocol
+SDRLAP protocol Scyther formal language code
